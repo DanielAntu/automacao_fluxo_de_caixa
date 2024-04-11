@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 
 load_dotenv()
 
-USERS = os.environ.get('USERS', '')
+USER = os.environ.get('USERS', '')
 PASSWORD = os.environ.get('PASSWORD', '')
 
 ROOT_PATCH = Path(__file__).parent
@@ -28,31 +28,31 @@ def make_browser(*options):
 
     return browser
 
-def preacherForm(browser, xpath, valor):
-    browser.find_element(By.XPATH, xpath).send_keys(valor)
+def preacher_form(browser, xpath, value):
+    browser.find_element(By.XPATH, xpath).send_keys(value)
 
 # openpyxl
 workbook = load_workbook('dados_registro.xlsx')
-plan = workbook['Sheet1']
+sheet = workbook['Sheet1']
 
 browser = make_browser()
 browser.get('http://127.0.0.1:8000/')
 
 # login
-preacherForm(browser, '//*[@id="id_username"]', USERS)
+preacher_form(browser, '//*[@id="id_username"]', USER)
 sleep(1)
-preacherForm(browser, '//*[@id="id_password"]', PASSWORD)
+preacher_form(browser, '//*[@id="id_password"]', PASSWORD)
 sleep(1)
 browser.find_element(By.XPATH, '/html/body/main/div/form/input[2]').click()
 
 # registrar fluxo
-for linha in plan.iter_rows(min_row=2, values_only=True):
-    descricao, natureza, tipo, valor = linha
-    preacherForm(browser, '//*[@id="id_description"]', descricao)
-    preacherForm(browser, '//*[@id="id_nature"]', natureza)
-    if tipo is not None:
-        preacherForm(browser, '//*[@id="id_type_cash"]', tipo)
-    preacherForm(browser, '//*[@id="id_value"]', valor)
+for row in sheet.iter_rows(min_row=2, values_only=True):
+    description, nature, type_cash, value = row
+    preacher_form(browser, '//*[@id="id_description"]', description)
+    preacher_form(browser, '//*[@id="id_nature"]', nature)
+    if type_cash is not None:
+        preacher_form(browser, '//*[@id="id_type_cash"]', type_cash)
+    preacher_form(browser, '//*[@id="id_value"]', value)
     browser.find_element(By.XPATH, '/html/body/main/div[2]/form/input[2]').click()
     sleep(2)
     
